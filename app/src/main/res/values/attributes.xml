@@ -8,4 +8,11 @@
     </declare-styleable>
 
 
+    <declare-styleable name="MyViewGroup">
+
+        <attr name="Radios" format="integer"/>
+
+    </declare-styleable>
+
+
 </resources>

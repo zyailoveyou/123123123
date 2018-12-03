@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
 
 
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -18,8 +17,11 @@
         custom:layout_constraintEnd_toEndOf="parent"
         custom:layout_constraintStart_toStartOf="parent"
         custom:parm1="150"
-        custom:parm2="goodforit"
+        custom:parm2="goodfor"
         />
+
+
+
 
     <Button
         android:id="@+id/playAnimation"
@@ -34,33 +36,49 @@
 
 
     <com.cop.zqc.designmywigete.MyViewGroup
-        android:id="@+id/myViewGroup"
-        android:layout_width="108dp"
-        android:layout_height="118dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/ic_launcher_background"
+        android:id="@+id/MyViewGroup"
+        android:layout_width="match_parent"
+
+        android:layout_height="200dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         custom:layout_constraintBottom_toBottomOf="parent"
-        custom:layout_constraintStart_toStartOf="parent">
+        custom:layout_constraintTop_toBottomOf="@+id/playAnimation"
+        custom:Radios="400"
+
+        >
 
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/center"
-            custom:srcCompat="@drawable/center"
-            tools:layout_editor_absoluteX="48dp"
-            tools:layout_editor_absoluteY="231dp" />
+            android:id="@+id/imageIDcenter"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            custom:srcCompat="@drawable/center" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="120dp"
-            android:layout_height="100dp"
-            android:text="OKOKOK"
-            android:textSize="30sp"
-            tools:layout_editor_absoluteX="256dp"
-            tools:layout_editor_absoluteY="231dp" />
+
+        <ImageView
+            android:id="@+id/icon1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            custom:srcCompat="@drawable/icon1" />
+
+        <ImageView
+            android:id="@+id/icon2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            custom:srcCompat="@drawable/icon2" />
+
+        <ImageView
+            android:id="@+id/icon3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            custom:srcCompat="@drawable/icon3" />
+
+
+
+
     </com.cop.zqc.designmywigete.MyViewGroup>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
