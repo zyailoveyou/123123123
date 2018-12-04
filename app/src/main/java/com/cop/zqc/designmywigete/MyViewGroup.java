@@ -1,17 +1,19 @@
 package com.cop.zqc.designmywigete;
 
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.media.Image;
+
 import android.util.AttributeSet;
-import android.util.Log;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+
 
 public class MyViewGroup extends ViewGroup {
 
@@ -27,6 +29,8 @@ public class MyViewGroup extends ViewGroup {
     private int mImageIconStartLocationX;
     private int mImageIconStartLocationY;
     private ImageView mChildImageView;
+    private ArrayList<ImageView> mMenuImageViewList;
+
 
 
     public MyViewGroup(Context context) {
@@ -50,6 +54,7 @@ public class MyViewGroup extends ViewGroup {
 //    public MyViewGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 //        super(context, attrs, defStyleAttr, defStyleRes);
 //    }
+
 
 
 
@@ -179,36 +184,44 @@ public class MyViewGroup extends ViewGroup {
 
     private void OpenMeumAnimation() {
 
-        AnimationSet groupAnimation = new AnimationSet(true);
-
+        mMenuImageViewList = new ArrayList<>();
 
         for (int i = 1; i < getChildCount(); i++) {
 
             mChildImageView = (ImageView) getChildAt(i);
 
+            mMenuImageViewList.add(mChildImageView);
+
             //mChildImageView.setVisibility(VISIBLE);
-
-            ValueAnimator OpenMenuAnimation = ValueAnimator.ofFloat(10, 50);
-
-            OpenMenuAnimation.setDuration(1000);
-            
-            groupAnimation.
-
-            OpenMenuAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                @Override
-
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-
-                    mChildImageView.setTranslationX((Float) valueAnimator.getAnimatedValue());
-                    mChildImageView.setTranslationY((Float) valueAnimator.getAnimatedValue());
-
-                }
-            });
 
         }
 
 
+        ValueAnimator OpenMenuAnimation = ValueAnimator.ofFloat(10, 50);
+
+        OpenMenuAnimation.setDuration(1000);
+
+        //AnimatorSet AnimatorGroup = new AnimatorSet();
+
+        OpenMenuAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+
+                for (int i = 0; i < mMenuImageViewList.size(); i++) {
+
+                    mMenuImageViewList.get(i).setTranslationX((Float) valueAnimator.getAnimatedValue());
+                    mMenuImageViewList.get(i).setTranslationY((Float) valueAnimator.getAnimatedValue());
+
+
+                }
+
+            }
+
+        });
+
+        OpenMenuAnimation.start();
 
     }
 
