@@ -136,13 +136,19 @@ public class MyViewGroup extends ViewGroup {
 
             mImageIconStartLocationY = mImageCenterStartLocationY - (int)(Math.sin((Math.PI/4)*i)*mRadios);
 
-            mImageViewIcon.layout(mImageIconStartLocationX,
-                                  mImageIconStartLocationY,
-                    mImageIconStartLocationX+mImageIconWidth,
-                    mImageIconStartLocationY+mImageIconHeight);
+            mImageViewIcon.layout(mImageCenterStartLocationX,
+                                  mImageCenterStartLocationY,
+                    mImageCenterStartLocationX+mImageIconWidth,
+                    mImageCenterStartLocationY+mImageIconHeight);
 
 
-            //mImageViewIcon.setVisibility(GONE);
+//            mImageViewIcon.layout(mImageIconStartLocationX,
+//                    mImageIconStartLocationY,
+//                    mImageIconStartLocationX+mImageIconWidth,
+//                    mImageIconStartLocationY+mImageIconHeight);
+
+
+            mImageViewIcon.setVisibility(INVISIBLE);
 
 
             final int ClickPositon = i;
@@ -192,12 +198,12 @@ public class MyViewGroup extends ViewGroup {
 
             mMenuImageViewList.add(mChildImageView);
 
-            //mChildImageView.setVisibility(VISIBLE);
+            mChildImageView.setVisibility(VISIBLE);
 
         }
 
 
-        ValueAnimator OpenMenuAnimation = ValueAnimator.ofFloat(10, 50);
+        ValueAnimator OpenMenuAnimation = ValueAnimator.ofFloat(10, 100);
 
         OpenMenuAnimation.setDuration(1000);
 
