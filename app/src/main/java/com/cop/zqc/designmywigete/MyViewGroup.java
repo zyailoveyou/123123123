@@ -1,5 +1,6 @@
 package com.cop.zqc.designmywigete;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.media.Image;
@@ -7,15 +8,14 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
 
 public class MyViewGroup extends ViewGroup {
 
-    private  int mImageIDcenter;
 
-    private ArrayList<ImageView> mImageViewsDataList;
     private float mRadios;
     private ImageView mImageCenter;
     private ImageView mImageViewIcon;
@@ -23,6 +23,10 @@ public class MyViewGroup extends ViewGroup {
     private int mImageCenterStartLocationY;
     private int mImageCenterWidth;
     private int mImageCenterHeight;
+    private boolean IsOpening;
+    private int mImageIconStartLocationX;
+    private int mImageIconStartLocationY;
+    private ImageView mChildImageView;
 
 
     public MyViewGroup(Context context) {
@@ -69,8 +73,11 @@ public class MyViewGroup extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int width, int Height) {
 
+
         layoutCenter();
         layoutList();
+
+
 
     }
 
@@ -90,9 +97,19 @@ public class MyViewGroup extends ViewGroup {
         mImageCenterStartLocationY = ParentHeight - mImageCenterHeight;
 
         mImageCenter.layout(mImageCenterStartLocationX,
-                mImageCenterStartLocationY,
+                            mImageCenterStartLocationY,
                          mImageCenterStartLocationX +mImageCenterWidth,
                          mImageCenterStartLocationY +mImageCenterHeight);
+
+
+        mImageCenter.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                CenterOnClick();
+
+            }
+        });
 
 
     }
@@ -110,15 +127,91 @@ public class MyViewGroup extends ViewGroup {
 
 
             //重点：坐标反推，有点复杂 主要是横坐标反推
-            int mImageIconStartLocationX = mImageCenterStartLocationX + mImageCenterWidth/2 - (int)(Math.cos((Math.PI/4)*i)*mRadios)- mImageIconWidth/2;
+            mImageIconStartLocationX = mImageCenterStartLocationX + mImageCenterWidth/2 - (int)(Math.cos((Math.PI/4)*i)*mRadios)- mImageIconWidth/2;
 
-            int mImageIconStartLocationY = mImageCenterStartLocationY - (int)(Math.sin((Math.PI/4)*i)*mRadios);
+            mImageIconStartLocationY = mImageCenterStartLocationY - (int)(Math.sin((Math.PI/4)*i)*mRadios);
 
-            mImageViewIcon.layout(mImageIconStartLocationX,mImageIconStartLocationY,mImageIconStartLocationX+mImageIconWidth,mImageIconStartLocationY+mImageIconHeight);
+            mImageViewIcon.layout(mImageIconStartLocationX,
+                                  mImageIconStartLocationY,
+                    mImageIconStartLocationX+mImageIconWidth,
+                    mImageIconStartLocationY+mImageIconHeight);
+
+
+            //mImageViewIcon.setVisibility(GONE);
+
+
+            final int ClickPositon = i;
+
+            mImageViewIcon.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+//                    ListOnClick(view,ClickPositon);
+
+                }
+            });
 
         }
 
     }
+
+
+
+    public void CenterOnClick(){
+
+
+//        if (IsOpening==true) {
+//
+//            OpenMeumAnimation();
+//        }
+//
+//
+//        if (IsOpening==false) {
+//
+//            CloseMeumAnimation();
+//        }
+
+        OpenMeumAnimation();
+
+    }
+
+
+
+    private void OpenMeumAnimation() {
+
+        AnimationSet groupAnimation = new AnimationSet(true);
+
+
+        for (int i = 1; i < getChildCount(); i++) {
+
+            mChildImageView = (ImageView) getChildAt(i);
+
+            //mChildImageView.setVisibility(VISIBLE);
+
+            ValueAnimator OpenMenuAnimation = ValueAnimator.ofFloat(10, 50);
+
+            OpenMenuAnimation.setDuration(1000);
+            
+            groupAnimation.
+
+            OpenMenuAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                @Override
+
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+
+                    mChildImageView.setTranslationX((Float) valueAnimator.getAnimatedValue());
+                    mChildImageView.setTranslationY((Float) valueAnimator.getAnimatedValue());
+
+                }
+            });
+
+        }
+
+
+
+    }
+
 
 }
 
