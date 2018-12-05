@@ -3,11 +3,9 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
 
     <com.cop.zqc.designmywigete.mytextView
 
@@ -19,8 +17,6 @@
         custom:parm1="150"
         custom:parm2="goodfor"
         />
-
-
 
 
     <Button
@@ -44,26 +40,26 @@
         android:layout_marginBottom="8dp"
         custom:layout_constraintBottom_toBottomOf="parent"
         custom:layout_constraintTop_toBottomOf="@+id/playAnimation"
-        custom:Radios="400"
+        custom:Radios="200"
         >
 
 
         <ImageView
             android:id="@+id/icon1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             custom:srcCompat="@drawable/icon1" />
 
         <ImageView
             android:id="@+id/icon2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             custom:srcCompat="@drawable/icon2" />
 
         <ImageView
             android:id="@+id/icon3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             custom:srcCompat="@drawable/icon3" />
 
 
