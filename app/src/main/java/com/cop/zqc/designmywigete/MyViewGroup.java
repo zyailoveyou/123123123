@@ -1,6 +1,8 @@
 package com.cop.zqc.designmywigete;
 
 import android.animation.AnimatorSet;
+import android.animation.PointFEvaluator;
+import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,7 +17,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 
-public class MyViewGroup extends ViewGroup {
+public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
 
     private float mRadios;
@@ -30,7 +32,12 @@ public class MyViewGroup extends ViewGroup {
     private int mImageIconStartLocationY;
     private ImageView mChildImageView;
     private ArrayList<ImageView> mMenuImageViewList;
-
+    private ArrayList<Position> mPositionToAnimatorList;
+    private Position mAnimatorCenterPosition;
+    private int mParentWidth;
+    private int mParentHeight;
+    private int mAdapterCenterWidth;
+    private int mAdapterCenterHeight;
 
 
     public MyViewGroup(Context context) {
@@ -44,6 +51,9 @@ public class MyViewGroup extends ViewGroup {
         TypedArray BuildImageData = context.obtainStyledAttributes(attrs,R.styleable.MyViewGroup);
 
         mRadios = BuildImageData.getFloat(R.styleable.MyViewGroup_Radios,0);
+
+        mPositionToAnimatorList = new ArrayList<>();
+
 
     }
 
@@ -79,10 +89,20 @@ public class MyViewGroup extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int width, int Height) {
 
 
-        layoutCenter();
+        mImageCenter = (ImageView) getChildAt(getChildCount()-1);
+
+        mImageCenterWidth = mImageCenter.getMeasuredWidth();
+        mImageCenterHeight = mImageCenter.getMeasuredHeight();
+
+        mParentWidth = getMeasuredWidth();
+        mParentHeight = getMeasuredHeight();
+
+        mImageCenterStartLocationX = mParentWidth /2 - mImageCenterWidth/2;
+        mImageCenterStartLocationY = mParentHeight - mImageCenterHeight;
+
         layoutList();
-
-
+        layoutCenter();
+//
 
     }
 
@@ -90,16 +110,6 @@ public class MyViewGroup extends ViewGroup {
 
     private void layoutCenter() {
 
-        mImageCenter = (ImageView) getChildAt(0);
-
-        mImageCenterWidth = mImageCenter.getMeasuredWidth();
-        mImageCenterHeight = mImageCenter.getMeasuredHeight();
-
-        int ParentWidth = getMeasuredWidth();
-        int ParentHeight = getMeasuredHeight();
-
-        mImageCenterStartLocationX = ParentWidth/2 - mImageCenterWidth/2;
-        mImageCenterStartLocationY = ParentHeight - mImageCenterHeight;
 
         mImageCenter.layout(mImageCenterStartLocationX,
                             mImageCenterStartLocationY,
@@ -123,35 +133,40 @@ public class MyViewGroup extends ViewGroup {
     private void layoutList() {
 
 
-        for (int i = 1; i < getChildCount(); i++) {
+        for (int i = 0; i < getChildCount()-1; i++) {
+
+            int k = i+1;
 
             mImageViewIcon = (ImageView) getChildAt(i);
 
             int mImageIconWidth = mImageViewIcon.getMeasuredWidth();
             int mImageIconHeight = mImageViewIcon.getMeasuredHeight();
 
-
-            //重点：坐标反推，有点复杂 主要是横坐标反推
-            mImageIconStartLocationX = mImageCenterStartLocationX + mImageCenterWidth/2 - (int)(Math.cos((Math.PI/4)*i)*mRadios)- mImageIconWidth/2;
-
-            mImageIconStartLocationY = mImageCenterStartLocationY - (int)(Math.sin((Math.PI/4)*i)*mRadios);
-
-            mImageViewIcon.layout(mImageCenterStartLocationX,
-                                  mImageCenterStartLocationY,
-                    mImageCenterStartLocationX+mImageIconWidth,
-                    mImageCenterStartLocationY+mImageIconHeight);
+            mAdapterCenterWidth = mImageIconWidth;
+            mAdapterCenterHeight = mImageIconHeight;
 
 
-//            mImageViewIcon.layout(mImageIconStartLocationX,
-//                    mImageIconStartLocationY,
-//                    mImageIconStartLocationX+mImageIconWidth,
-//                    mImageIconStartLocationY+mImageIconHeight);
+//重点：坐标反推，有点复杂 主要是横坐标反推
+            mImageIconStartLocationX = mImageCenterStartLocationX + mImageCenterWidth/2 - (int)(Math.cos((Math.PI/4)*k)*mRadios)- mImageIconWidth/2;
+            mImageIconStartLocationY = mImageCenterStartLocationY - (int)(Math.sin((Math.PI/4)*k)*mRadios);
+//重点：坐标反推，有点复杂 主要是横坐标反推
 
 
-            mImageViewIcon.setVisibility(INVISIBLE);
+//设置所有子list的发散点坐标
+            Position AnimatorCenterPosition = new Position();
+            AnimatorCenterPosition.setX(mImageIconStartLocationX);
+            AnimatorCenterPosition.setY(mImageIconStartLocationY);
+            mPositionToAnimatorList.add(AnimatorCenterPosition);
+//设置所有子list的发散点坐标
+
+            mImageViewIcon.layout(mImageIconStartLocationX,
+                    mImageIconStartLocationY,
+                    mImageIconStartLocationX+mImageIconWidth,
+                    mImageIconStartLocationY+mImageIconHeight);
 
 
-            final int ClickPositon = i;
+//            mImageViewIcon.setVisibility(INVISIBLE);
+
 
             mImageViewIcon.setOnClickListener(new OnClickListener() {
                 @Override
@@ -163,6 +178,14 @@ public class MyViewGroup extends ViewGroup {
             });
 
         }
+
+
+//设置动画的中心坐标
+        mAnimatorCenterPosition = new Position();
+        mAnimatorCenterPosition.setX(mParentWidth/2-mAdapterCenterWidth/2);
+        mAnimatorCenterPosition.setY(mParentHeight- mImageCenterHeight/2-mAdapterCenterHeight/2);
+//设置动画的中心坐标
+
 
     }
 
@@ -187,38 +210,36 @@ public class MyViewGroup extends ViewGroup {
     }
 
 
-
     private void OpenMeumAnimation() {
 
         mMenuImageViewList = new ArrayList<>();
 
-        for (int i = 1; i < getChildCount(); i++) {
+        for (int i = 0; i < getChildCount()-1; i++) {
 
             mChildImageView = (ImageView) getChildAt(i);
 
             mMenuImageViewList.add(mChildImageView);
 
-            mChildImageView.setVisibility(VISIBLE);
+//            mChildImageView.setVisibility(VISIBLE);
 
         }
 
 
-        ValueAnimator OpenMenuAnimation = ValueAnimator.ofFloat(10, 100);
+        ValueAnimator OpenMenuAnimation = ValueAnimator.ofObject(this,mPositionToAnimatorList,mAnimatorCenterPosition);
 
         OpenMenuAnimation.setDuration(1000);
 
-        //AnimatorSet AnimatorGroup = new AnimatorSet();
-
         OpenMenuAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
             @Override
-
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
 
                 for (int i = 0; i < mMenuImageViewList.size(); i++) {
 
-                    mMenuImageViewList.get(i).setTranslationX((Float) valueAnimator.getAnimatedValue());
-                    mMenuImageViewList.get(i).setTranslationY((Float) valueAnimator.getAnimatedValue());
+//                    mMenuImageViewList.get(i).setTranslationX(((ArrayList<Position>) valueAnimator.getAnimatedValue()).get(i).getX());
+//                    mMenuImageViewList.get(i).setTranslationY(((ArrayList<Position>) valueAnimator.getAnimatedValue()).get(i).getY());
+
+                    mMenuImageViewList.get(i).setX(((ArrayList<Position>) valueAnimator.getAnimatedValue()).get(i).getX());
+                    mMenuImageViewList.get(i).setY(((ArrayList<Position>) valueAnimator.getAnimatedValue()).get(i).getY());
 
 
                 }
@@ -232,6 +253,56 @@ public class MyViewGroup extends ViewGroup {
     }
 
 
+    @Override
+    public Object evaluate(float fraction, Object StartLocationList, Object EndLocationList) {
+
+        ArrayList<Position> ReturnArrayLocationLisht = new ArrayList<>();
+
+        ReturnArrayLocationLisht = this.CloneArrayList((ArrayList<Position>)StartLocationList);
+
+        for (int i = 0; i < mMenuImageViewList.size(); i++) {
+
+            int NowLocationX = ReturnArrayLocationLisht.get(i).getX();
+            int NowLocationY = ReturnArrayLocationLisht.get(i).getY();
+
+            int EndPositionX = ((Position)EndLocationList).getX();
+            int EndPositionY = ((Position)EndLocationList).getY();
+
+            int AnimatorLocationX = NowLocationX + (int)(fraction*(EndPositionX-NowLocationX));
+            int AnimatorLocationY = NowLocationY + (int)(fraction*(EndPositionY-NowLocationY));
+
+            ReturnArrayLocationLisht.get(i).setX(AnimatorLocationX);
+            ReturnArrayLocationLisht.get(i).setY(AnimatorLocationY);
+
+        }
+
+        return ReturnArrayLocationLisht;
+
+    }
+
+    @Override
+    public ArrayList<Position> CloneArrayList(ArrayList<Position> Targat) {
+
+        ArrayList<Position> Cloned = new ArrayList<>();
+
+        for (int i = 0; i < Targat.size(); i++) {
+
+//            Cloned.add(Targat.get(i));
+
+            int x = Targat.get(i).getX();
+            int y = Targat.get(i).getY();
+
+            Position xy = new Position();
+
+            xy.setX(x);
+            xy.setY(y);
+
+            Cloned.add(xy);
+
+        }
+
+        return Cloned;
+    }
 }
 
 

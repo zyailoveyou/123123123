@@ -45,15 +45,7 @@
         custom:layout_constraintBottom_toBottomOf="parent"
         custom:layout_constraintTop_toBottomOf="@+id/playAnimation"
         custom:Radios="400"
-
         >
-
-
-        <ImageView
-            android:id="@+id/imageIDcenter"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            custom:srcCompat="@drawable/center" />
 
 
         <ImageView
@@ -74,6 +66,12 @@
             android:layout_height="30dp"
             custom:srcCompat="@drawable/icon3" />
 
+
+        <ImageView
+            android:id="@+id/imageIDcenter"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            custom:srcCompat="@drawable/center" />
 
 
 
