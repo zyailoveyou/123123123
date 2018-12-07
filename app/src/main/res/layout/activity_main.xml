@@ -40,7 +40,10 @@
         android:layout_marginBottom="8dp"
         custom:layout_constraintBottom_toBottomOf="parent"
         custom:layout_constraintTop_toBottomOf="@+id/playAnimation"
-        custom:Radios="200"
+        custom:Radios="300"
+        custom:Duration="600"
+        custom:CenterIconRotation="540"
+        custom:ListIconRotation="720"
         >
 
 

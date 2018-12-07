@@ -2,26 +2,22 @@ package com.cop.zqc.designmywigete;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
-import android.animation.PointFEvaluator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-
 import android.util.AttributeSet;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AnimationSet;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 
 public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
-
 
     private float mRadios;
     private ImageView mImageCenter;
@@ -41,7 +37,10 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
     private int mParentHeight;
     private int mAdapterCenterWidth;
     private int mAdapterCenterHeight;
-
+    private int mDuration;
+    private int mCenterIconRotaion;
+    private int mListIconRotaion;
+    private Context mContext;
 
     public MyViewGroup(Context context) {
         super(context);
@@ -51,12 +50,14 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
         super(context, attrs);
 
+        mContext = context;
+
         TypedArray BuildImageData = context.obtainStyledAttributes(attrs,R.styleable.MyViewGroup);
-
         mRadios = BuildImageData.getFloat(R.styleable.MyViewGroup_Radios,0);
-
+        mDuration = BuildImageData.getInteger(R.styleable.MyViewGroup_Duration,0);
+        mCenterIconRotaion = BuildImageData.getInteger(R.styleable.MyViewGroup_CenterIconRotation,0);
+        mListIconRotaion = BuildImageData.getInteger(R.styleable.MyViewGroup_ListIconRotation,0);
         mPositionToAnimatorList = new ArrayList<>();
-
         IsOpening = false;
 
     }
@@ -110,12 +111,10 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
     private void layoutCenter() {
 
-
         mImageCenter.layout(mImageCenterStartLocationX,
                             mImageCenterStartLocationY,
                          mImageCenterStartLocationX +mImageCenterWidth,
                          mImageCenterStartLocationY +mImageCenterHeight);
-
 
         mImageCenter.setOnClickListener(new OnClickListener() {
             @Override
@@ -125,7 +124,6 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
             }
         });
-
 
     }
 
@@ -163,13 +161,11 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
                     mImageIconStartLocationX+mImageIconWidth,
                     mImageIconStartLocationY+mImageIconHeight);
 
-//            mImageViewIcon.setVisibility(INVISIBLE);
-
             mImageViewIcon.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-//                    ListOnClick(view,ClickPositon);
+                    ListOnClick(view);
 
                 }
             });
@@ -184,16 +180,42 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
     }
 
+    private void ListOnClick(View view) {
+
+        switch (view.getId()) {
+
+            case R.id.icon1:
+
+                Toast.makeText(mContext,"孤儿1",Toast.LENGTH_SHORT).show();
+
+                break;
+            case R.id.icon2:
+
+                Toast.makeText(mContext,"孤儿2",Toast.LENGTH_SHORT).show();
+
+                break;
+
+            case R.id.icon3:
+
+                Toast.makeText(mContext,"孤儿3",Toast.LENGTH_SHORT).show();
+
+
+                break;
+
+
+        }
+    }
+
 
     public void CenterOnClick(){
 
-            OpenMeumAnimation();
+            MeumAnimation();
 
     }
 
 
 
-    private void OpenMeumAnimation() {
+    private void MeumAnimation() {
 
         mMenuImageViewList = new ArrayList<>();
 
@@ -208,9 +230,7 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
         }
 
         ValueAnimator OpenMenuAnimation = ValueAnimator.ofObject(this,mPositionToAnimatorList,mAnimatorCenterPosition);
-
-        OpenMenuAnimation.setDuration(700);
-
+        OpenMenuAnimation.setDuration(mDuration);
         OpenMenuAnimation.setInterpolator(new OvershootInterpolator());
 
         OpenMenuAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -228,12 +248,12 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
         });
 
-        OpenMenuAnimation.start();
 
         OpenMenuAnimation.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
 
+                mImageCenter.setEnabled(false);
 
             }
 
@@ -248,6 +268,8 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
                 {
                     IsOpening = true;
                 }
+
+                mImageCenter.setEnabled(true);
             }
 
             @Override
@@ -260,6 +282,65 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
             }
         });
+
+
+        float CenterStartRotationArc = 0;
+        float CenterEndRotationArc = mCenterIconRotaion;
+
+        if(IsOpening == true)
+        {
+            CenterStartRotationArc = mImageCenter.getRotation();
+            CenterEndRotationArc = 0;
+
+        }
+
+        //中心旋转动画
+        ValueAnimator RotationCenterAnimation = ValueAnimator.ofFloat(CenterStartRotationArc,CenterEndRotationArc);
+        RotationCenterAnimation.setDuration(mDuration);
+        RotationCenterAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+
+                mImageCenter.setRotation((Float) valueAnimator.getAnimatedValue());
+
+            }
+        });
+
+
+
+        float ListStartRotationArc = 0;
+        float ListEndRotationArc = mListIconRotaion;
+
+        if(IsOpening == true)
+        {
+            ListStartRotationArc = mMenuImageViewList.get(0).getRotation();
+            ListEndRotationArc = 0;
+
+        }
+
+
+        //list旋转动画
+        ValueAnimator RotationListAnimation = ValueAnimator.ofFloat(ListStartRotationArc,ListEndRotationArc);
+        RotationListAnimation.setDuration(mDuration);
+        RotationListAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+
+                for (int i = 0; i < mMenuImageViewList.size(); i++) {
+
+                    mMenuImageViewList.get(i).setRotation((Float) valueAnimator.getAnimatedValue());
+
+                }
+
+            }
+        });
+
+
+
+
+        AnimatorSet AnimationGroup = new AnimatorSet();
+        AnimationGroup.playTogether(OpenMenuAnimation,RotationCenterAnimation,RotationListAnimation);
+        AnimationGroup.start();
 
 
     }
@@ -323,7 +404,6 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
         for (int i = 0; i < Targat.size(); i++) {
 
-//            Cloned.add(Targat.get(i));
 
             int x = Targat.get(i).getX();
             int y = Targat.get(i).getY();
@@ -338,6 +418,7 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
         }
 
         return Cloned;
+
     }
 }
 
