@@ -13,10 +13,11 @@
         android:layout_width="192dp"
         android:layout_height="219dp"
         custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintHorizontal_bias="0.031"
         custom:layout_constraintStart_toStartOf="parent"
         custom:parm1="150"
         custom:parm2="goodfor"
-        />
+        tools:layout_editor_absoluteY="8dp" />
 
 
     <Button
@@ -33,18 +34,20 @@
 
     <com.cop.zqc.designmywigete.MyViewGroup
         android:id="@+id/MyViewGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
 
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        custom:layout_constraintBottom_toBottomOf="parent"
-        custom:layout_constraintTop_toBottomOf="@+id/playAnimation"
-        custom:Radios="300"
-        custom:Duration="600"
+        android:background="@color/colorAccent"
         custom:CenterIconRotation="540"
+        custom:Duration="600"
         custom:ListIconRotation="720"
-        >
+        custom:Radios="300"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintStart_toEndOf="@+id/mytextview"
+        custom:layout_constraintTop_toTopOf="parent">
 
 
         <ImageView
@@ -68,10 +71,9 @@
 
         <ImageView
             android:id="@+id/imageIDcenter"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             custom:srcCompat="@drawable/center" />
-
 
 
     </com.cop.zqc.designmywigete.MyViewGroup>

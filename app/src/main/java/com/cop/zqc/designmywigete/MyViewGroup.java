@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 
 public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
@@ -74,14 +76,70 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = getChildAt(i);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        measureChildren(widthMeasureSpec,heightMeasureSpec);
 
-            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+        int childCount = getChildCount();
+
+        int WidthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int HeightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        int WideSize = MeasureSpec.getSize(widthMeasureSpec);
+        int HeightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int LayoutWidth = WideSize;
+        int layoutHeight = HeightSize;
+
+        View Lastchild = getChildAt(getChildCount()-1);
+        int CenterHeight = Lastchild.getMeasuredHeight() ;
+
+        int ReturnChildID = 0;
+        double UpperCaculation = 99;
+        double ReturnAngle = 0;
+
+        for (int i = 0; i < childCount-1; i++) {
+
+            int k  = i+1;
+            double NowCaculation = Math.abs((Math.PI / 4)*k - (Math.PI/2));
+
+            if(i == 0)
+            {
+                UpperCaculation = NowCaculation;
+            }
+            else {
+
+                if (NowCaculation <= UpperCaculation)
+                {
+                    UpperCaculation = NowCaculation;
+                    ReturnChildID = i;
+                    ReturnAngle = (Math.PI/4)*k;
+                }
+            }
         }
 
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        switch (HeightMode) {
+            case MeasureSpec.AT_MOST:
+
+//                layoutHeight =(int)(CenterHeight+Math.abs(Math.sin(ReturnAngle)*mRadios)+(getChildAt(ReturnChildID).getMeasuredHeight())/2);
+              layoutHeight =(int)(CenterHeight+Math.abs(Math.sin(ReturnAngle)*mRadios));
+                break;
+
+        }
+
+        switch (WidthMode) {
+            case MeasureSpec.AT_MOST:
+
+                LayoutWidth = getChildAt(0).getMeasuredWidth()/2 +
+                        getChildAt(getChildCount()-2).getMeasuredWidth()/2+
+                        (int)Math.abs(Math.cos(Math.PI/4)*mRadios) +
+                        (int)Math.abs(Math.cos((Math.PI/4)*(getChildCount()-1))*mRadios);
+                break;
+        }
+
+
+        setMeasuredDimension(LayoutWidth,layoutHeight);
+
 
     }
 
@@ -199,9 +257,7 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
 
                 Toast.makeText(mContext,"孤儿3",Toast.LENGTH_SHORT).show();
 
-
                 break;
-
 
         }
     }
@@ -403,7 +459,6 @@ public class MyViewGroup extends ViewGroup implements TypeEvaluator,Clone {
         ArrayList<Position> Cloned = new ArrayList<>();
 
         for (int i = 0; i < Targat.size(); i++) {
-
 
             int x = Targat.get(i).getX();
             int y = Targat.get(i).getY();
